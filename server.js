@@ -1,6 +1,6 @@
 const http = require("http");
 const express = require("express");
-const { addUser, addPost, postList, editPost, deletePost } = require("./app.js");
+const { addUser, addPost, postList, editPost, deletePost, userPosting } = require("./app.js");
 
 const app = express();
 app.use(express.json());
@@ -19,6 +19,9 @@ app.patch("/editpost/:postingId", editPost);
 
 //게시글 삭제
 app.delete("/deletepost/:postingId", deletePost);
+
+//해당 유저 게시글 확인
+app.get("/userPosting/:userId", userPosting);
 
 const server = http.createServer(app);
 
