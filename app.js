@@ -53,14 +53,14 @@ const list = {
       userID: 3,
       userName: "new user 1",
       postingId: 3,
-      postingImageUrl: "내용 1",
+      postingTitle: "내용 1",
       postingContent: "sampleContent3",
     },
     {
-      userID: 4,
+      userID: 1,
       userName: "new user 2",
       postingId: 4,
-      postingImageUrl: "내용 2",
+      postingTitle: "내용 2",
       postingContent: "sampleContent4",
     },
   ],
@@ -101,18 +101,22 @@ const editPost = (req, res) => {
   const { postingId } = req.params;
   const { userId, userName, postingTitle, postingContent } = req.body.data;
 
+  const resEdit = {};
+
   list.data.some((element) => {
     if (element.postingId === Number(postingId)) {
       element.userID = userId;
       element.userName = userName;
       element.postingTitle = postingTitle;
       element.postingContent = postingContent;
-      res.status(201);
-      res.json(element);
+      resEdit.data = element;
       return true;
     }
     return false;
   });
+
+  res.status(201);
+  res.json(resEdit);
 };
 
 //게시글 삭제
@@ -129,4 +133,33 @@ const deletePost = (req, res) => {
   res.json({ message: "postingDeleted" });
 };
 
-module.exports = { addUser, addPost, postList, editPost, deletePost };
+const userPosting = (req, res) => {
+  const { userId } = req.params;
+
+  const resUserList = {};
+  resUserList.data = {};
+
+  users.some((element) => {
+    if (element.id === Number(userId)) {
+      resUserList.data.userID = element.id;
+      resUserList.data.userName = element.name;
+      return true;
+    }
+  });
+
+  resUserList.data.postings = [];
+  list.data.forEach((element) => {
+    if (element.userID === Number(userId)) {
+      resUserList.data.postings.push({
+        postingId: element.postingId,
+        postingTitle: element.postingTitle,
+        postingContent: element.postingContent,
+      });
+    }
+  });
+
+  res.status(200);
+  res.json(resUserList);
+};
+
+module.exports = { addUser, addPost, postList, editPost, deletePost, userPosting };
