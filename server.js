@@ -15,13 +15,13 @@ app.post("/addpost", addPost);
 app.get("/postlist", postList);
 
 //게시글 수정
-app.patch("/editpost/:postingId", editPost);
+app.patch("/editpost/", editPost);
 
 //게시글 삭제
-app.delete("/deletepost/:postingId", deletePost);
+app.delete("/deletepost/", deletePost);
 
 //해당 유저 게시글 확인
-app.get("/userPosting/:userId", userPosting);
+app.get("/userPosting/:id", userPosting);
 
 const server = http.createServer(app);
 
