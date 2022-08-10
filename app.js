@@ -1,13 +1,7 @@
 // app.js
-const http = require("http");
-const express = require("express");
 
-//데이터베이스
-const users = [];
-const posts = [];
-
-//이 데이터들이 json형태로 프론트에서 들어왔다 가정 - 시작
-let frontUserData = [
+//유저 데이터
+const users = [
   {
     id: 1,
     name: "Rebekah Johnson",
@@ -21,9 +15,9 @@ let frontUserData = [
     password: "password",
   },
 ];
-frontUserData = JSON.stringify(frontUserData);
 
-let frontPostData = [
+//게시물 데이터 - 1
+const posts = [
   {
     id: 1,
     title: "간단한 HTTP API 개발 시작!",
@@ -37,11 +31,9 @@ let frontPostData = [
     userId: 1,
   },
 ];
-frontPostData = JSON.stringify(frontPostData);
-//끝
 
-//게시글 목록 데이터
-let list = {
+//게시글 목록 데이터 - 2
+const list = {
   data: [
     {
       userID: 1,
@@ -75,41 +67,24 @@ let list = {
 };
 
 // 아래에 코드를 작성해 주세요.
-const app = express();
-app.use(express.json());
 
 //회원가입 구현
 const addUser = (req, res) => {
-  console.log(req.body);
-  req.body = frontUserData;
-  const user = JSON.parse(req.body);
+  const { id, name, email, password } = req.body.userinfo;
 
-  user.forEach((element) => {
-    users.push({
-      id: element.id,
-      name: element.name,
-      email: element.email,
-      password: element.password,
-    });
-  });
+  users.push({ id, name, email, password });
 
+  console.log(users);
   res.json({ message: "userCreated" });
 };
 
 //게시글 생성 구현
 const addPost = (req, res) => {
-  req.body = frontPostData;
-  const post = JSON.parse(req.body);
+  const { id, title, content, userId } = req.body.postinfo;
 
-  post.forEach((element) => {
-    posts.push({
-      id: element.id,
-      title: element.title,
-      content: element.content,
-      userId: element.userId,
-    });
-  });
+  posts.push({ id, title, content, userId });
 
+  console.log(posts);
   res.json({ message: "postCreated" });
 };
 
@@ -118,17 +93,23 @@ const postList = (req, res) => {
   res.json(list);
 };
 
-//회원가입
-app.post("/signup", addUser);
+//게시글 수정
+const editPost = (req, res) => {
+  const { userId, userName, postingId, postingTitle, postingContent } = req.body.data;
 
-//게시글 생성
-app.post("/addpost", addPost);
+  list.data.some((element) => {
+    if (element.userID === userId) {
+      element.userName = userName;
+      element.postingId = postingId;
+      element.postingTitle = postingTitle;
+      element.postingContent = postingContent;
+      res.json(element);
+      return true;
+    }
+    return false;
+  });
+};
 
-//게시글 생성
-app.get("/postlist", postList);
+const deletePost = (req, res) => {};
 
-const server = http.createServer(app);
-
-server.listen(8000, () => {
-  console.log("server is running on PORT 8000");
-});
+module.exports = { addUser, addPost, postList, editPost, deletePost };
