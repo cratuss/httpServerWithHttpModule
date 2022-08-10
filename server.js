@@ -15,7 +15,10 @@ app.post("/addpost", addPost);
 app.get("/postlist", postList);
 
 //게시글 수정
-app.patch("/editpost", editPost);
+app.patch("/editpost/:postingId", editPost);
+
+//게시글 삭제
+app.delete("/deletepost/:postingId", deletePost);
 
 const server = http.createServer(app);
 

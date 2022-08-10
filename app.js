@@ -75,6 +75,7 @@ const addUser = (req, res) => {
   users.push({ id, name, email, password });
 
   console.log(users);
+  res.status(201);
   res.json({ message: "userCreated" });
 };
 
@@ -85,24 +86,28 @@ const addPost = (req, res) => {
   posts.push({ id, title, content, userId });
 
   console.log(posts);
+  res.status(201);
   res.json({ message: "postCreated" });
 };
 
 //게시글 목록 출력
 const postList = (req, res) => {
+  res.status(200);
   res.json(list);
 };
 
 //게시글 수정
 const editPost = (req, res) => {
-  const { userId, userName, postingId, postingTitle, postingContent } = req.body.data;
+  const { postingId } = req.params;
+  const { userId, userName, postingTitle, postingContent } = req.body.data;
 
   list.data.some((element) => {
-    if (element.userID === userId) {
+    if (element.postingId === Number(postingId)) {
+      element.userID = userId;
       element.userName = userName;
-      element.postingId = postingId;
       element.postingTitle = postingTitle;
       element.postingContent = postingContent;
+      res.status(201);
       res.json(element);
       return true;
     }
@@ -110,6 +115,18 @@ const editPost = (req, res) => {
   });
 };
 
-const deletePost = (req, res) => {};
+//게시글 삭제
+const deletePost = (req, res) => {
+  const { postingId } = req.params;
+  for (let i = 0; i < list.data.length; i++) {
+    if (list.data[i].postingId === Number(postingId)) {
+      list.data.splice(i, 1);
+      break;
+    }
+  }
+  console.log(list.data);
+  res.status(201);
+  res.json({ message: "postingDeleted" });
+};
 
 module.exports = { addUser, addPost, postList, editPost, deletePost };
