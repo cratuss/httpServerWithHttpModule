@@ -114,41 +114,49 @@ const editPost = (req, res) => {
 
 //게시글 삭제
 const deletePost = (req, res) => {
-  const { id } = req.body.data;
-  for (let i = 0; i < posts.length; i++) {
-    if (posts[i].postingId === Number(id)) {
-      posts.splice(i, 1);
-      break;
-    }
+  const { postingid } = req.query;
+
+  try {
+    posts.some((post, index) => {
+      if (post.postingId === Number(postingid)) {
+        posts.splice(index, 1);
+        return true;
+      }
+      return false;
+    });
+    console.log(posts);
+    res.status(201).json({ message: "postingDeleted" });
+  } catch (error) {
+    res.status(400).json({ message: "responseError" });
   }
-  console.log(posts);
-  res.status(201).json({ message: "postingDeleted" });
 };
 
 //해당 유저 게시글 확인
 const userPosting = (req, res) => {
-  const { id } = req.params;
+  const { userid } = req.query;
 
   const postings = [];
-  for (let i = 0; i < posts.length; i++) {
-    if (posts[i].userId === Number(id)) {
-      const { userId, ...rest } = posts[i];
-      postings.push({
-        ...rest,
-      });
-    }
+
+  try {
+    posts.forEach((post) => {
+      if (post.userId === Number(userid)) {
+        const { userId, ...rest } = post;
+        postings.push({
+          ...rest,
+        });
+      }
+    });
+    const user = users.find((user) => user.id === Number(userid));
+    const newUserPosting = {
+      userID: user.id,
+      userName: user.name,
+      postings,
+    };
+
+    res.status(200).json({ data: newUserPosting });
+  } catch (error) {
+    res.status(400).json({ message: "responseError" });
   }
-
-  const user = users.find((user) => user.id === Number(id));
-
-  const newUserPosting = {
-    userID: user.id,
-    userName: user.name,
-    postings,
-  };
-
-  res.status(200);
-  res.json({ data: newUserPosting });
 };
 
 module.exports = { addUser, addPost, postList, editPost, deletePost, userPosting };
