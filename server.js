@@ -21,7 +21,7 @@ app.patch("/editpost/", editPost);
 app.delete("/deletepost/", deletePost);
 
 //해당 유저 게시글 확인
-app.get("/userPosting/:id", userPosting);
+app.get("/userPosting/", userPosting);
 
 const server = http.createServer(app);
 
